@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/3814/3814802.png" />
+    <title>Online Signature</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav {
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            height: 75px;
+        }
+
+        .nav-left {
+            width: 50%;
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-left: 12%;
+        }
+
+        .nav-right {
+            width: 30%;
+            display: flex;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .nav-right>div {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .box {
+            background-color: white;
+            padding: 60px 20px;
+            letter-spacing: 1px;
+        }
+
+        .box h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .box p {
+            max-width: 800px;
+            margin: 0 auto;
+            color: #34495e;
+        }
+
+        .txt-center {
+            text-align: center;
+        }
+
+        .txt-end {
+            justify-content: end;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #signature-pad {
+            border: 2px solid #ccc;
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        .controls button,
+        .controls input {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .controls button:nth-child(1) {
+            background-color: #eb4c3a;
+            color: white;
+        }
+
+        .controls button:nth-child(1):hover {
+            background-color: #e8200a;
+            color: white;
+        }
+
+        .controls button:nth-child(2) {
+            background-color: #5bcf61;
+            color: white;
+        }
+
+        .controls button:nth-child(2):hover {
+            background-color: #05ec11;
+            color: white;
+        }
+
+
+        label {
+            margin-left: 100px;
+        }
+
+        #color-picker {
+            margin-top: 25px;
+            height: 40px;
+            padding: 1px;
+            border: 1px solid #ccc;
+        }
+
+        .downBox {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="nav">
+        <div class="nav-left">ONLINE SIGNATURE</div>
+        <div class="nav-right">
+            <div>Home</div>
+            <div>Signature Generator</div>
+            <div>Draw Signature</div>
+        </div>
+    </div>
+
+    <div class="box txt-center">
+        <h1>Draw Your Signature Online for Free</h1>
+        <p>Create your digital signature easily using our online signature pad. Compatible with all devices including
+            iPhone, iPad, Android phones, tablets, and computers.</p>
+    </div>
+
+    <div class="container">
+        <h2>Draw Your Signature</h2>
+        <canvas id="signature-pad"></canvas>
+        <div class="controls">
+            <button onclick="clearSignature()">Clear Signature</button>
+            <button onclick="downloadSignature()">Download Signature</button>
+            <label for="color">Select Color</label>
+            <input type="color" id="color-picker" value="#000000" onchange="changeColor()">
+        </div>
+    </div>
+
+    <div class="downBox">
+        <h2>Sign Document Securely online for Free</h2>
+        <p>The #1 E-Signature Solution for your Business.</p>
+    </div>
+
+    <script>
+        // Setting up the signature canvas
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        let drawing = false;
+        let color = '#000000';
+
+        // Start drawing when mouse is pressed or touch is initiated
+        canvas.addEventListener('mousedown', (e) => {
+            startDrawing(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
+            e.preventDefault(); // Prevent scrolling while drawing
+        });
+
+        function startDrawing(x, y) {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Drawing with mouse or touch
+        canvas.addEventListener('mousemove', (e) => {
+            if (drawing) {
+                draw(e.offsetX, e.offsetY);
+            }
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent scrolling while drawing
+            if (drawing) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                draw(touch.clientX - rect.left, touch.clientY - rect.top);
+            }
+        });
+
+        function draw(x, y) {
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Stop drawing when mouse or touch ends
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('touchcancel', stopDrawing);
+
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        // Clear the signature pad
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Download the signature
+        function downloadSignature() {
+            const link = document.createElement('a');
+            link.download = 'signature.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Change color based on color picker
+        function changeColor() {
+            color = document.getElementById('color-picker').value;
+        }
+
+    </script>
+</body>
+
+</html>
