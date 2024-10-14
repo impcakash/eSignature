@@ -175,7 +175,7 @@
     </div>
 
     <script>
-        // Setting up the signature canvas
+
         const canvas = document.getElementById('signature-pad');
         const ctx = canvas.getContext('2d');
         canvas.width = canvas.offsetWidth;
@@ -183,16 +183,16 @@
         let drawing = false;
         let color = '#000000';
 
-        // Start drawing when mouse is pressed or touch is initiated
+        // to draw
         canvas.addEventListener('mousedown', (e) => {
             startDrawing(e.offsetX, e.offsetY);
         });
 
         canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
             startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
-            e.preventDefault(); // Prevent scrolling while drawing
         });
 
         function startDrawing(x, y) {
@@ -201,7 +201,7 @@
             ctx.moveTo(x, y);
         }
 
-        // Drawing with mouse or touch
+        // to draw
         canvas.addEventListener('mousemove', (e) => {
             if (drawing) {
                 draw(e.offsetX, e.offsetY);
@@ -209,7 +209,7 @@
         });
 
         canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Prevent scrolling while drawing
+            e.preventDefault();
             if (drawing) {
                 const touch = e.touches[0];
                 const rect = canvas.getBoundingClientRect();
@@ -224,7 +224,7 @@
             ctx.stroke();
         }
 
-        // Stop drawing when mouse or touch ends
+        // to stop draw
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseleave', stopDrawing);
         canvas.addEventListener('touchend', stopDrawing);
@@ -234,12 +234,10 @@
             drawing = false;
         }
 
-        // Clear the signature pad
         function clearSignature() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Download the signature
         function downloadSignature() {
             const link = document.createElement('a');
             link.download = 'signature.png';
@@ -247,7 +245,6 @@
             link.click();
         }
 
-        // Change color based on color picker
         function changeColor() {
             color = document.getElementById('color-picker').value;
         }
